@@ -1,3 +1,5 @@
+
+
 //
 //  ForecastViewController.swift
 //  Weather
@@ -26,17 +28,11 @@ class ForecastViewController: UIViewController {
         let baseURL = NSURL(string: "https://api.forecast.io/forecast/\(forecastAPIKey)/")
         let forecastURL = NSURL(string: cityCoordinate, relativeToURL: baseURL)
         let weatherData = NSData(contentsOfURL: forecastURL!)
-        
-        
-       
-        
+              
         convertToJson(weatherData!)
       
         self.cityNameLabel.text = self.cityName
     }
-    
-    let days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-    let temperature = [-11, -2, 0, 3, 9, 15, 27]
     let dayTableCellIdentifier = "DayTableCellIdentifier"
     let dayTableSmallCellIdentifier = "DayTableSmallCellIdentifier"
     let currentDate = NSDate()
@@ -44,8 +40,10 @@ class ForecastViewController: UIViewController {
     
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.days.count
+        return self.daysWeather.count
     }
+    
+    
     
         
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -116,43 +114,31 @@ class ForecastViewController: UIViewController {
          
             
             if let currently = jsonData["currently"] as? [String: AnyObject] {
-                if let temperature = currently["temperature"] as? Double {
-                    if let humidity = currently["humidity"] as? Double{
-                        if let pressure = currently["pressure"] as? Double{
-                            if let windSpeed = currently["windSpeed"] as? Double{
-                                if let precipProbability = currently["precipProbability"] as? Double{
-                                    if let icon = currently["icon"] as? String{
-                                        if let summary = currently["summary"] as? String{                                                                                       daysWeather.append(CurrentWeather(temperatureMax: temperature,temperatureMin: temperature, humidity: humidity, pressure: pressure, windSpeed: windSpeed, precipProbability: precipProbability, icon: icon, summary: summary))
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                let temperature = currently["temperature"] as? Double
+                let humidity = currently["humidity"] as? Double
+                let pressure = currently["pressure"] as? Double
+                let windSpeed = currently["windSpeed"] as? Double
+                let precipProbability = currently["precipProbability"] as? Double
+                let icon = currently["icon"] as? String
+                let summary = currently["summary"] as? String;
+                
+                daysWeather.append(CurrentWeather(temperatureMax: temperature!,temperatureMin: temperature!, humidity: humidity!, pressure: pressure!, windSpeed: windSpeed!, precipProbability: precipProbability!, icon: icon!, summary: summary!))
             }
 
             
            if let currently = jsonData["daily"] as? [String: AnyObject] {
                     if let datas = currently["data"] as? [[String: AnyObject]]{
                         for data in datas {
-                            if let temperatureMax = data["temperatureMax"] as? Double {
-                                if let temperatureMin = data["temperatureMin"] as? Double {
-                                    if let humidity = data["humidity"] as? Double{
-                                        if let pressure = data["pressure"] as? Double{
-                                            if let windSpeed = data["windSpeed"] as? Double{
-                                                if let precipProbability = data["precipProbability"] as? Double{
-                                                    if let icon = data["icon"] as? String{
-                                                        if let summary = data["summary"] as? String{
-                                                            daysWeather.append(CurrentWeather(temperatureMax: temperatureMax,temperatureMin: temperatureMin, humidity: humidity, pressure: pressure, windSpeed: windSpeed, precipProbability: precipProbability, icon: icon, summary: summary))
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                            let temperatureMax = data["temperatureMax"] as? Double
+                            let temperatureMin = data["temperatureMin"] as? Double
+                            let humidity = data["humidity"] as? Double
+                            let pressure = data["pressure"] as? Double
+                            let windSpeed = data["windSpeed"] as? Double
+                            let precipProbability = data["precipProbability"] as? Double
+                            let icon = data["icon"] as? String
+                            let summary = data["summary"] as? String
+                            
+                            daysWeather.append(CurrentWeather(temperatureMax: temperatureMax!,temperatureMin: temperatureMin!, humidity: humidity!, pressure: pressure!, windSpeed: windSpeed!, precipProbability: precipProbability!, icon: icon!, summary: summary!))
                         }
                     }
             }
