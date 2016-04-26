@@ -1,5 +1,5 @@
 //
-//  NetworkOperation.swift
+//  CoreDataManager.swift
 //  Weather
 //
 //  Created by Admin on 26.04.16.
