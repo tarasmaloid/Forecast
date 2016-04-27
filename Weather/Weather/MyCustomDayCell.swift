@@ -30,3 +30,96 @@ class MyCustomDayCell: UITableViewCell{
     @IBOutlet weak var precipLabel: UILabel!
     @IBOutlet weak var pressureLabel: UILabel!
 }
+
+
+
+
+
+//
+//{
+//    results =     (
+//        {
+//            "address_components" =             (
+//                {
+//                    "long_name" = Lviv;
+//                    "short_name" = Lviv;
+//                    types =                     (
+//                        locality,
+//                        political
+//                    );
+//                },
+
+
+//                {
+//                    "long_name" = "L'vivs'ka city council";
+//                    "short_name" = "L'vivs'ka city council";
+//                    types =                     (
+//                        "administrative_area_level_3",
+//                        political
+//                    );
+//                },
+
+
+//                {
+//                    "long_name" = "Lviv Oblast";
+//                    "short_name" = "Lviv Oblast";
+//                    types =                     (
+//                        "administrative_area_level_1",
+//                        political
+//                    );
+//                },
+
+
+//                {
+//                    "long_name" = Ukraine;
+//                    "short_name" = UA;
+//                    types =                     (
+//                        country,
+//                        political
+//                    );
+//                }
+
+//            );
+
+
+
+//            "formatted_address" = "Lviv, Lviv Oblast, Ukraine";
+
+//            geometry =             {
+//                bounds =                 {
+//                    northeast =                     {
+//                        lat = "49.897471";
+//                        lng = "24.118191";
+//                    };
+//                    southwest =                     {
+//                        lat = "49.7679071";
+//                        lng = "23.9062801";
+//                    };
+//                };
+
+//                location =                 {
+//                    lat = "49.839683";
+//                    lng = "24.029717";
+//                };
+
+//                "location_type" = APPROXIMATE;
+//                viewport =                 {
+//                    northeast =                     {
+//                        lat = "49.897471";
+//                        lng = "24.118191";
+//                    };
+//                    southwest =                     {
+//                        lat = "49.7679071";
+//                        lng = "23.9062801";
+//                    };
+//                };
+//            };
+//            "place_id" = ChIJV5oQCXzdOkcR4ngjARfFI0I;
+//            types =             (
+//                locality,
+//                political
+//            );
+//        }
+//    );
+//    status = OK;
+//}

@@ -7,80 +7,136 @@
 //
 
 import UIKit
+import CoreData
 
-class WeatherTableTableViewController: UITableViewController {
+class WeatherTableTableViewController: UITableViewController, UISearchBarDelegate{
 
-    let WeatherSegueIdentifier = "WeatherSegueIdentifier"
-    let CityTableCellIdentifier = "CityTableCellIdentifier"
+    let weatherSegueIdentifier = "WeatherSegueIdentifier"
+    let cityTableCellIdentifier = "CityTableCellIdentifier"
     
     @IBOutlet weak var searchBar: UISearchBar!
  
     
     var searchActive : Bool = false
-    let cities = ["Lviv", "Kyiv", "Barcelona", "London", "Rava-Rus'ka"]
+    var cityIsTrue : Bool = true
     
-    let baseUrl = "https://maps.googleapis.com/maps/api/geocode/json?"
-    let apikey = "AIzaSyAvvD1EYt8vfxkunLsEc5SdNYZ1O0mgN6E"
-    var cityCoordinate = ""
-    var cityInformation = ""
     var findedCity = ""
     
+    let coreDataManager = CoreDataManager()
+    let networkOperation = NetworkOperation()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+         navigationItem.leftBarButtonItem = editButtonItem()
         self.tableView.tableFooterView = UIView()
+       // self.tableView.editing = true
+        coreDataManager.viewWillAppearCity()
+     
+   }
+    
+    func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
+        searchActive = true;
+    }
+    func searchBarTextDidEndEditing(searchBar: UISearchBar) {
+        searchActive = false;
+    }
+    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+        searchActive = false;
+    }
+    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+        searchActive = false;
     }
     
-  
+    func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+      
+        findedCity = searchText
+        
+        if(findedCity==""){
+            searchActive = false;
+        } else {
+            searchActive = true;
+        }
+        self.tableView.reloadData()
+    }
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }
     
+      
+    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+        return true
+    }
+    
+    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+        if editingStyle == .Delete{
+            self.coreDataManager.deleteCityData(indexPath.row)
+            self.coreDataManager.viewWillAppearCity()
+            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+        }else{
+            return
+        }
+    }
+    
+    
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return self.cities.count
-        
+        if (searchActive){
+            return 1
+        }
+        return coreDataManager.citiesList.count
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(self.CityTableCellIdentifier, forIndexPath: indexPath)
+        let cell = tableView.dequeueReusableCellWithIdentifier(self.cityTableCellIdentifier, forIndexPath: indexPath)
+        if (findedCity=="") {searchActive=false}else {searchActive=true}
+        if(searchActive){
+            cityIsTrue = networkOperation.getCityCoordinateForZip(String(self.findedCity))
+            if (cityIsTrue){
+                cell.textLabel?.text = networkOperation.cityInformation
+               // cell.textLabel?.text = findedCity
+            }else{
+                cell.textLabel?.text = "'\(self.findedCity)' not found"
+            }
         
-        cell.textLabel?.text = self.cities[indexPath.row]
+        }else{
+            cell.textLabel?.text = coreDataManager.citiesList[indexPath.row].valueForKey("cityName") as? String
+          
+        }
         
         return cell
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        self.performSegueWithIdentifier(self.WeatherSegueIdentifier, sender: indexPath)
-    }
-    
-   
-    
-    
-    func getCityCoordinateForZip(zipCode: String) {
-        let url = NSURL(string: "\(baseUrl)address=\(zipCode)&key=\(apikey)")
-        let data = NSData(contentsOfURL: url!)
-        let json = try! NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as! NSDictionary
-        if let result = json["results"] as? NSArray {
-            cityInformation = result[0]["formatted_address"] as! String
-            if let geometry = result[0]["geometry"] as? NSDictionary {
-                if let location = geometry["location"] as? NSDictionary {
-                    let latitude = location["lat"] as! Float
-                    let longitude = location["lng"] as! Float
-                    cityCoordinate = "\(latitude),\(longitude)"
-                }
-            }
+        if (findedCity=="") {searchActive=false}else {searchActive=true}
+        if (cityIsTrue){
+            self.performSegueWithIdentifier(self.weatherSegueIdentifier, sender: indexPath)
         }
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+       override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if let controller = segue.destinationViewController as? ForecastViewController,
             indexPath = sender as? NSIndexPath {
-            getCityCoordinateForZip(String(cities[indexPath.row]))
-          
-            controller.cityName = String(cities[indexPath.row])
-            controller.cityCoordinate = cityCoordinate
+            
+            if (searchActive){
+                let id = coreDataManager.smallestCityId()
+                
+                controller.cityName = networkOperation.correctCityName
+                coreDataManager.addCityData(id, name: networkOperation.correctCityName, information: networkOperation.cityInformation, coordinate: networkOperation.cityCoordinate)
+               controller.cityCoordinate = networkOperation.cityCoordinate
+                
+                
+                
+                
+            }else{
+                networkOperation.getCityCoordinateForZip(String(coreDataManager.citiesList[indexPath.row].valueForKey("cityName")))
+                controller.cityName = coreDataManager.citiesList[indexPath.row].valueForKey("cityName") as! String
+                controller.cityCoordinate = coreDataManager.citiesList[indexPath.row].valueForKey("cityCoordinate") as! String
+
+            }
+            coreDataManager.viewWillAppearCity()
+            tableView.reloadData()
+            
         }
     }
 
