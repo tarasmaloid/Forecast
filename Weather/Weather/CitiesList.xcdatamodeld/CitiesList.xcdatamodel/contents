@@ -4,12 +4,12 @@
         <attribute name="cityCoordinate" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="cityInformation" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="cityName" attributeType="String" syncable="YES"/>
-        <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="id" attributeType="Integer 64" syncable="YES"/>
     </entity>
     <entity name="Weather" representedClassName=".Weather" syncable="YES">
         <attribute name="humidity" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
         <attribute name="icon" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="id" attributeType="Integer 64" syncable="YES"/>
         <attribute name="precipProbability" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
         <attribute name="pressure" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
         <attribute name="summary" optional="YES" attributeType="String" syncable="YES"/>

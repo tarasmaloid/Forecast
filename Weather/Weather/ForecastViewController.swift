@@ -12,26 +12,22 @@ import UIKit
 
 class ForecastViewController: UIViewController {
     
-    private let forecastAPIKey = "15d8d5ecb9ecddd55be4dad88dbccefd"
-    
-    
-    var cityName = ""
-    var cityCoordinate = ""
-    var daysWeather = [CurrentWeather]()
+    var cityId : Int = 0
     
     @IBOutlet weak var cityNameLabel: UILabel!
     @IBOutlet weak var tableView: UITableView!
     
+    let coreDataManager = CoreDataManager()
+    var currentForecastData : [Weather] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let baseURL = NSURL(string: "https://api.forecast.io/forecast/\(forecastAPIKey)/")
-        let forecastURL = NSURL(string: cityCoordinate, relativeToURL: baseURL)
-        let weatherData = NSData(contentsOfURL: forecastURL!)
-              
-        convertToJson(weatherData!)
-      
-        self.cityNameLabel.text = self.cityName
+        coreDataManager.viewWillAppearWeather()
+        coreDataManager.viewWillAppearCity()
+        
+        currentForecastData = coreDataManager.getCityForecast(cityId)
+        
     }
     let dayTableCellIdentifier = "DayTableCellIdentifier"
     let dayTableSmallCellIdentifier = "DayTableSmallCellIdentifier"
@@ -40,7 +36,7 @@ class ForecastViewController: UIViewController {
     
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.daysWeather.count
+        return currentForecastData.count
     }
     
     
@@ -49,8 +45,10 @@ class ForecastViewController: UIViewController {
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         var cell : UITableViewCell
         
-        //MyCustomDayCell = self.tableView.dequeueReusableCellWithIdentifier(self.DayTableCellIdentifier) as! MyCustomDayCell
-      //  let smallCell : MyCustomDaySmallCell = self.tableView.dequeueReusableCellWithIdentifier(self.DayTableSmallCellIdentifier) as! MyCustomDaySmallCell
+        self.coreDataManager.viewWillAppearCity()
+        self.coreDataManager.viewWillAppearWeather()
+        
+        self.cityNameLabel.text = self.coreDataManager.getCityName(cityId)
         
         let numberFormatter = NSNumberFormatter()
         numberFormatter.numberStyle = NSNumberFormatterStyle.DecimalStyle
@@ -77,9 +75,9 @@ class ForecastViewController: UIViewController {
         
             baseCell.dayLabel?.text = "\(dayName)"
             baseCell.dateLabel?.text = "\(dayDate)"
-            baseCell.temperatureLabel?.text = "\(numberFormatter.stringFromNumber(self.daysWeather[indexPath.row].temperatureMax)!)º"
-            baseCell.weatherImage?.image = UIImage(named: daysWeather[indexPath.row].icon)
-            baseCell.summaryLabel?.text = daysWeather[indexPath.row].summary
+            baseCell.temperatureLabel?.text = "\(numberFormatter.stringFromNumber(self.currentForecastData[indexPath.row].temperatureMax)!)º"
+            baseCell.weatherImage?.image = UIImage(named: self.currentForecastData[indexPath.row].icon!)
+            baseCell.summaryLabel?.text = self.currentForecastData[indexPath.row].summary
           
             baseCell.humidityImage?.image = UIImage(named: "humidity")
             baseCell.windImage?.image = UIImage(named: "windSpeed")
@@ -87,10 +85,10 @@ class ForecastViewController: UIViewController {
             baseCell.pressureImage?.image = UIImage(named: "pressure")
             
             
-            baseCell.humidityLabel?.text = "\(numberFormatter.stringFromNumber(daysWeather[indexPath.row].humidity)!)%"
-            baseCell.windLabel?.text = "\(numberFormatter.stringFromNumber(daysWeather[indexPath.row].windSpeed)!)m/s"
-            baseCell.precipLabel?.text = "\(numberFormatter.stringFromNumber(daysWeather[indexPath.row].precipProbability)!)%"
-            baseCell.pressureLabel?.text = "\(numberFormatter.stringFromNumber(daysWeather[indexPath.row].pressure)!)mm"
+            baseCell.humidityLabel?.text = "\(numberFormatter.stringFromNumber(self.currentForecastData[indexPath.row].humidity)!)%"
+            baseCell.windLabel?.text = "\(numberFormatter.stringFromNumber(self.currentForecastData[indexPath.row].windSpeed)!)m/s"
+            baseCell.precipLabel?.text = "\(numberFormatter.stringFromNumber(self.currentForecastData[indexPath.row].precipProbability)!)%"
+            baseCell.pressureLabel?.text = "\(numberFormatter.stringFromNumber(self.currentForecastData[indexPath.row].pressure)!)mm"
             
         }else{
             cell = self.tableView.dequeueReusableCellWithIdentifier(self.dayTableSmallCellIdentifier, forIndexPath: indexPath)
@@ -100,53 +98,14 @@ class ForecastViewController: UIViewController {
             
             smallCell.dayLabel?.text = "\(dayName)"
             smallCell.dateLabel?.text = "\(dayDate)"
-            smallCell.temperatureLabel?.text = "\(numberFormatter.stringFromNumber(self.daysWeather[indexPath.row].temperatureMax)!)º / \(numberFormatter.stringFromNumber(self.daysWeather[indexPath.row].temperatureMin)!)º"
-            smallCell.weatherImage?.image = UIImage(named: daysWeather[indexPath.row].icon)
+            smallCell.temperatureLabel?.text = "\(numberFormatter.stringFromNumber(self.currentForecastData[indexPath.row].temperatureMax)!)º / \(numberFormatter.stringFromNumber(self.currentForecastData[indexPath.row].temperatureMin)!)º"
+            smallCell.weatherImage?.image = UIImage(named: self.currentForecastData[indexPath.row].icon!)
             
         }
        return cell
     }
     
     
-    func convertToJson(weatherData:NSData){
-        do{
-            let jsonData = try NSJSONSerialization.JSONObjectWithData(weatherData, options: []) as! NSDictionary
-         
-            
-            if let currently = jsonData["currently"] as? [String: AnyObject] {
-                let temperature = currently["temperature"] as? Double
-                let humidity = currently["humidity"] as? Double
-                let pressure = currently["pressure"] as? Double
-                let windSpeed = currently["windSpeed"] as? Double
-                let precipProbability = currently["precipProbability"] as? Double
-                let icon = currently["icon"] as? String
-                let summary = currently["summary"] as? String;
-                
-                daysWeather.append(CurrentWeather(temperatureMax: temperature!,temperatureMin: temperature!, humidity: humidity!, pressure: pressure!, windSpeed: windSpeed!, precipProbability: precipProbability!, icon: icon!, summary: summary!))
-            }
-
-            
-           if let currently = jsonData["daily"] as? [String: AnyObject] {
-                    if let datas = currently["data"] as? [[String: AnyObject]]{
-                        for data in datas {
-                            let temperatureMax = data["temperatureMax"] as? Double
-                            let temperatureMin = data["temperatureMin"] as? Double
-                            let humidity = data["humidity"] as? Double
-                            let pressure = data["pressure"] as? Double
-                            let windSpeed = data["windSpeed"] as? Double
-                            let precipProbability = data["precipProbability"] as? Double
-                            let icon = data["icon"] as? String
-                            let summary = data["summary"] as? String
-                            
-                            daysWeather.append(CurrentWeather(temperatureMax: temperatureMax!,temperatureMin: temperatureMin!, humidity: humidity!, pressure: pressure!, windSpeed: windSpeed!, precipProbability: precipProbability!, icon: icon!, summary: summary!))
-                        }
-                    }
-            }
-            
-        }catch{
-             print("error serializing JSON: \(error)")
-        }
-    } 
-
+    
 }
 

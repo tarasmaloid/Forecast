@@ -12,7 +12,7 @@ import CoreData
 
 class Weather: NSManagedObject {
 
-    @NSManaged var cityId: Int
+    @NSManaged var id: Int
     @NSManaged var temperatureMax: Double
     @NSManaged var temperatureMin: Double
     @NSManaged var humidity: Double
@@ -24,7 +24,7 @@ class Weather: NSManagedObject {
     
     func saveData(id: Int, temperatureMax: Double, temperatureMin: Double, humidity: Double, pressure: Double, windSpeed: Double, precipProbability: Double, icon: String, summary: String, inNSManagedContext : NSManagedObjectContext) {
         
-        self.cityId = id
+        self.id = id
         self.temperatureMax = (temperatureMax-32) * 5/9 // F --> Cº
         self.temperatureMin = (temperatureMin-32) * 5/9 // F --> Cº
         self.humidity = humidity * 100 // %

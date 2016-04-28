@@ -80,13 +80,13 @@
 				84B2A8461CC5531E00FF1A6C /* CurrentWeather.swift */,
 				84B2A8341CBEF47800FF1A6C /* Main.storyboard */,
 				84B2A8371CBEF47800FF1A6C /* Assets.xcassets */,
-				84B2A8301CBEF47800FF1A6C /* AppDelegate.swift */,
 				84B2A8391CBEF47800FF1A6C /* LaunchScreen.storyboard */,
 				84B2A83C1CBEF47800FF1A6C /* Info.plist */,
 				844475501CCB76CD00B6A272 /* MyCustomDayCell.swift */,
 				844475521CCB774700B6A272 /* MyCustomDaySmallCell.swift */,
 				844475841CCFD0CD00B6A272 /* NetworkOperation.swift */,
 				8406C3081CD0975700A2691E /* CitiesList.xcdatamodeld */,
+				84B2A8301CBEF47800FF1A6C /* AppDelegate.swift */,
 			);
 			path = Weather;
 			sourceTree = "<group>";

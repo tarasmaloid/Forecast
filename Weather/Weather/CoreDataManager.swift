@@ -13,7 +13,7 @@ import UIKit
 class CoreDataManager{
     
     var citiesList = [City]()
-    var weatherList = [NSManagedObject]()
+    var weatherList = [Weather]()
     
     func addCityData(id: Int, name: String, information : String, coordinate : String) {
        
@@ -31,6 +31,7 @@ class CoreDataManager{
 //        let request = NSFetchRequest(entityName: "City")
 //        request.predicate = NSPredicate(format: "cityName == London")
 //        _ = try? managedContext.executeRequest(request) as? City
+        viewWillAppearCity()
 
     }
     
@@ -42,7 +43,7 @@ class CoreDataManager{
         
         citiesList.removeAtIndex(index)
         try? managedContext.save()
-
+        viewWillAppearCity()
     }
     
     func viewWillAppearCity() {
@@ -57,7 +58,7 @@ class CoreDataManager{
         do {
             let results =
                 try managedContext.executeFetchRequest(fetchRequest)
-            citiesList = results as! [NSManagedObject]
+            citiesList = results as! [City]
         } catch let error as NSError {
             print("Could not fetch \(error), \(error.userInfo)")
         }
@@ -73,7 +74,9 @@ class CoreDataManager{
         
         let weather = NSManagedObject(entity: entity!,
                                    insertIntoManagedObjectContext: managedContext) as? Weather
-        weather?.saveData(cityId, temperatureMax: temperatureMax, temperatureMin: temperatureMin, humidity: humidity, pressure: pressure, windSpeed: windSpeed, precipProbability: precipProbability, icon: icon, summary: summary, inNSManagedContext: managedContext)
+        weather!.saveData(cityId, temperatureMax: temperatureMax, temperatureMin: temperatureMin, humidity: humidity, pressure: pressure, windSpeed: windSpeed, precipProbability: precipProbability, icon: icon, summary: summary, inNSManagedContext: managedContext)
+        
+        viewWillAppearWeather()
         
     }
 
@@ -89,20 +92,29 @@ class CoreDataManager{
         do {
             let results =
                 try managedContext.executeFetchRequest(fetchRequest)
-            weatherList = results as! [NSManagedObject]
+            weatherList = results as! [Weather]
         } catch let error as NSError {
             print("Could not fetch \(error), \(error.userInfo)")
         }
     }
     
-    func deleteWeatherData(index : Int) {
+    func deleteWeatherData(cityId : Int) {
         
         let appDelegate:AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         let managedContext:NSManagedObjectContext = appDelegate.managedObjectContext
-        managedContext.deleteObject(weatherList[index] as NSManagedObject)
+      
         
-        weatherList.removeAtIndex(index)
-        try? managedContext.save()
+       
+        
+        for index in 0...self.weatherList.count-1 {
+            if (self.weatherList[index].id == cityId){
+                managedContext.deleteObject(weatherList[index] as NSManagedObject)
+             //   weatherList.removeAtIndex(index)
+                try? managedContext.save()
+              //  viewWillAppearWeather()
+            }
+        }        
+        viewWillAppearWeather()
         
     }
     
@@ -117,6 +129,43 @@ class CoreDataManager{
             i=i+1
         }
         return i        
+    }
+    
+    func getCityForecast(id: Int) -> [Weather]{
+        var currentCityForecast = [Weather]()
+        viewWillAppearWeather()
+        
+       for index in 0...self.weatherList.count-1 {
+            if (self.weatherList[index].id == id){
+                currentCityForecast.append(weatherList[index])
+            }            
+        }
+        
+        
+        return currentCityForecast
+    }
+    
+    
+    func getCityCoordinate(cityId: Int) -> String{
+        viewWillAppearCity()
+        
+        for index in 0...self.citiesList.count-1 {
+            if (self.citiesList[index].id == cityId){
+               return self.citiesList[index].cityCoordinate!
+            }
+        }
+        return ""
+    }
+    
+    func getCityName(cityId: Int) -> String{
+        viewWillAppearCity()
+        
+        for index in 0...self.citiesList.count-1 {
+            if (self.citiesList[index].id == cityId){
+                return self.citiesList[index].cityName!
+            }
+        }
+        return ""
     }
     
 }

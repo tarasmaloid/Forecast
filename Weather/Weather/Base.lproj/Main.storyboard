@@ -15,17 +15,9 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.050980392159999999" green="0.18823529410000001" blue="0.29803921570000003" alpha="1" colorSpace="calibratedRGB"/>
                         <color key="separatorColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                        <searchBar key="tableHeaderView" contentMode="redraw" id="4yv-3F-7YH">
-                            <rect key="frame" x="0.0" y="64" width="600" height="44"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                            <textInputTraits key="textInputTraits"/>
-                            <connections>
-                                <outlet property="delegate" destination="HBs-Iq-XSh" id="eKL-zt-X8G"/>
-                            </connections>
-                        </searchBar>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="CityTableCellIdentifier" textLabel="C8P-aG-oam" style="IBUITableViewCellStyleDefault" id="8sx-Uv-pIT">
-                                <rect key="frame" x="0.0" y="136" width="600" height="44"/>
+                                <rect key="frame" x="0.0" y="92" width="600" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="8sx-Uv-pIT" id="FL2-S2-5OL">
                                     <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
@@ -51,11 +43,19 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Cities" id="hut-mW-9tA"/>
                     <connections>
-                        <outlet property="searchBar" destination="4yv-3F-7YH" id="wzI-mH-M6b"/>
+                        <outlet property="searchDisplayController" destination="Rx2-RS-4Qf" id="gGE-WU-ISN"/>
                         <segue destination="nXN-rT-RTw" kind="show" identifier="WeatherSegueIdentifier" id="jCx-3f-V0c"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bsR-v3-wCr" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <searchDisplayController id="Rx2-RS-4Qf">
+                    <connections>
+                        <outlet property="delegate" destination="HBs-Iq-XSh" id="7Zl-UW-pc7"/>
+                        <outlet property="searchContentsController" destination="HBs-Iq-XSh" id="3WB-BX-gv4"/>
+                        <outlet property="searchResultsDataSource" destination="HBs-Iq-XSh" id="GhW-7k-3ke"/>
+                        <outlet property="searchResultsDelegate" destination="HBs-Iq-XSh" id="r2l-Vy-Hzj"/>
+                    </connections>
+                </searchDisplayController>
             </objects>
             <point key="canvasLocation" x="136" y="-719"/>
         </scene>
@@ -324,6 +324,7 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="0d6-z5-qqk">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="barTintColor" red="0.20000000000000001" green="0.40000000000000002" blue="0.59999999999999998" alpha="1" colorSpace="calibratedRGB"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
