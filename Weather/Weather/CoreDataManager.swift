@@ -16,7 +16,7 @@ class CoreDataManager{
     var weatherList = [Weather]()
     
     func addCityData(id: Int, name: String, information : String, coordinate : String) {
-       
+        
         let appDelegate =
             UIApplication.sharedApplication().delegate as! AppDelegate
         let managedContext = appDelegate.managedObjectContext
@@ -24,15 +24,11 @@ class CoreDataManager{
                                                         inManagedObjectContext:managedContext)
         
         let city = NSManagedObject(entity: entity!,
-                                     insertIntoManagedObjectContext: managedContext) as? City
+                                   insertIntoManagedObjectContext: managedContext) as? City
         city?.saveData(id, name: name, information: information, coordinate: coordinate, inNSManagedContext: managedContext)
-        
-        
-//        let request = NSFetchRequest(entityName: "City")
-//        request.predicate = NSPredicate(format: "cityName == London")
-//        _ = try? managedContext.executeRequest(request) as? City
+             
         viewWillAppearCity()
-
+        
     }
     
     func deleteCityData(index : Int) {
@@ -47,7 +43,7 @@ class CoreDataManager{
     }
     
     func viewWillAppearCity() {
-    
+        
         let appDelegate =
             UIApplication.sharedApplication().delegate as! AppDelegate
         
@@ -58,12 +54,15 @@ class CoreDataManager{
         do {
             let results =
                 try managedContext.executeFetchRequest(fetchRequest)
+            
             citiesList = results as! [City]
+            citiesList =  citiesList.reverse()
+            
         } catch let error as NSError {
             print("Could not fetch \(error), \(error.userInfo)")
         }
     }
-   
+    
     func addWeatherData(cityId: Int, temperatureMax:Double, temperatureMin: Double, humidity: Double, pressure: Double, windSpeed: Double, precipProbability: Double, icon: String, summary: String) {
         
         let appDelegate =
@@ -73,13 +72,13 @@ class CoreDataManager{
                                                         inManagedObjectContext:managedContext)
         
         let weather = NSManagedObject(entity: entity!,
-                                   insertIntoManagedObjectContext: managedContext) as? Weather
+                                      insertIntoManagedObjectContext: managedContext) as? Weather
         weather!.saveData(cityId, temperatureMax: temperatureMax, temperatureMin: temperatureMin, humidity: humidity, pressure: pressure, windSpeed: windSpeed, precipProbability: precipProbability, icon: icon, summary: summary, inNSManagedContext: managedContext)
         
         viewWillAppearWeather()
         
     }
-
+    
     func viewWillAppearWeather() {
         
         let appDelegate =
@@ -102,18 +101,18 @@ class CoreDataManager{
         
         let appDelegate:AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         let managedContext:NSManagedObjectContext = appDelegate.managedObjectContext
-      
         
-       
+        
+        
         
         for index in 0...self.weatherList.count-1 {
             if (self.weatherList[index].id == cityId){
                 managedContext.deleteObject(weatherList[index] as NSManagedObject)
-             //   weatherList.removeAtIndex(index)
+                //   weatherList.removeAtIndex(index)
                 try? managedContext.save()
-              //  viewWillAppearWeather()
+                //  viewWillAppearWeather()
             }
-        }        
+        }
         viewWillAppearWeather()
         
     }
@@ -128,17 +127,17 @@ class CoreDataManager{
         while citiesIDs.contains(i) {
             i=i+1
         }
-        return i        
+        return i
     }
     
     func getCityForecast(id: Int) -> [Weather]{
         var currentCityForecast = [Weather]()
         viewWillAppearWeather()
         
-       for index in 0...self.weatherList.count-1 {
+        for index in 0...self.weatherList.count-1 {
             if (self.weatherList[index].id == id){
                 currentCityForecast.append(weatherList[index])
-            }            
+            }
         }
         
         
@@ -151,7 +150,7 @@ class CoreDataManager{
         
         for index in 0...self.citiesList.count-1 {
             if (self.citiesList[index].id == cityId){
-               return self.citiesList[index].cityCoordinate!
+                return self.citiesList[index].cityCoordinate!
             }
         }
         return ""
@@ -166,6 +165,26 @@ class CoreDataManager{
             }
         }
         return ""
+    }
+    
+    
+    func addCityDataToArray(id: Int, name: String, information : String, coordinate : String) -> City {
+        
+        let appDelegate =
+            UIApplication.sharedApplication().delegate as! AppDelegate
+        let managedContext = appDelegate.managedObjectContext
+        let entity =  NSEntityDescription.entityForName("City",
+                                                        inManagedObjectContext:managedContext)
+        
+        let city = NSManagedObject(entity: entity!,
+                                   insertIntoManagedObjectContext: managedContext) as? City
+        
+        city?.id=0
+        city?.cityName=name
+        city?.cityInformation=information
+        city?.cityCoordinate = coordinate
+        
+        return city!
     }
     
 }

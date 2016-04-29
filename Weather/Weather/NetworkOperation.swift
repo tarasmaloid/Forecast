@@ -14,63 +14,61 @@ class NetworkOperation{
     let apikey = "AIzaSyAvvD1EYt8vfxkunLsEc5SdNYZ1O0mgN6E"
     
     let forecastAPIKey = "15d8d5ecb9ecddd55be4dad88dbccefd"
-//    
-    var cityInformation = ""
-    var cityCoordinate = ""
-    var correctCityName = ""
     
-   var findedCities = [City]()
+    
     
     
     let coreDataManager = CoreDataManager()
     
+    var foundCityName = [String]()
+    var foundCityInformation = [String]()
+    var foundCityCoordinate = [String]()
+    
+    
+    
+    
     func getCityCoordinateForZip(zipCode: String) -> Bool {
         
-    //    var currentCity = City()
+        
         
         let url = NSURL(string: "\(self.baseUrl)address=\(zipCode.stringByReplacingOccurrencesOfString(" ", withString: "+"))&key=\(self.apikey)")
-        if url == nil{
+        
+        if (url == nil || zipCode == ""){
             return false
         }
         let data = NSData(contentsOfURL: url!)
         let json = try! NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as! NSDictionary
         
-        print(json)
-        
-        guard let result =  json["results"] as? NSArray, formattedAddress = result.firstObject?["formatted_address"] as? String
-            else {
-                return false
-        }
-        
-        print("")
-        
-        print(result[0])
-        print(result[1])
-        
-        cityInformation = formattedAddress
-       // currentCity.cityInformation = formattedAddress
-        
-        if let geometry = result[0]["geometry"] as? NSDictionary {
-            if let location = geometry["location"] as? NSDictionary {
-                let latitude = location["lat"] as! Float
-                let longitude = location["lng"] as! Float
-               // currentCity.cityCoordinate = "\(latitude),\(longitude)"
-                cityCoordinate = "\(latitude),\(longitude)"
+        let result =  json["results"] as? [[String: AnyObject]]
+        for res in result! {
+            
+            let cityInfo = res["formatted_address"] as? String
+            
+            foundCityInformation.append(cityInfo!)
+            
+            if let geometry = res["geometry"] as? NSDictionary {
+                if let location = geometry["location"] as? NSDictionary {
+                    let latitude = location["lat"] as! Float
+                    let longitude = location["lng"] as! Float
+                    foundCityCoordinate.append("\(latitude),\(longitude)")
+                }
             }
+            
+            if let addressComponents = res["address_components"] as? [[String : AnyObject]]{
+                
+                let cityName = addressComponents[0]["long_name"] as! String
+                foundCityName.append(cityName)
+            }
+            
         }
         
-        if let addressComponents = result[0]["address_components"] as? [[String : AnyObject]]{
-           //currentCity.cityName = addressComponents[0]["long_name"] as? String
-            correctCityName = addressComponents[0]["long_name"] as! String
-        }
-        //findedCities.append(currentCity)
         return true
     }
     
     
     func addCityForecast(cityId : Int){
         
-                
+        
         let baseURL = NSURL(string: "https://api.forecast.io/forecast/\(forecastAPIKey)/")
         let forecastURL = NSURL(string: self.coreDataManager.getCityCoordinate(cityId), relativeToURL: baseURL)
         let weatherData = NSData(contentsOfURL: forecastURL!)
@@ -113,12 +111,11 @@ class NetworkOperation{
             }
             
             
-            
         }catch{
             print("error serializing JSON: \(error)")
         }
     }
-
     
-
+    
+    
 }

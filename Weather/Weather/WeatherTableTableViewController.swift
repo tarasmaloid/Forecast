@@ -35,20 +35,32 @@ class WeatherTableTableViewController: UITableViewController, UISearchBarDelegat
         searchController.searchBar.delegate = self
         definesPresentationContext = true
         searchController.dimsBackgroundDuringPresentation = false
-        
+        searchController.searchBar.barTintColor = UIColor(red: 51/255, green: 102/255, blue: 153/255, alpha: 1)
         tableView.tableHeaderView = searchController.searchBar
 
    }
 
     
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+        self.networkOperation.foundCityName.removeAll()
+        self.networkOperation.foundCityInformation.removeAll()
+        self.networkOperation.foundCityCoordinate.removeAll()
+        
+        cityIsTrue = networkOperation.getCityCoordinateForZip(searchText)
+        
+       
+        
         self.tableView.reloadData()
+        
     }
     func searchBarCancelButtonClicked(searchBar: UISearchBar) {
         searchController.active = false
         self.tableView.reloadData()
     }
     func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+        searchController.active = false
+        
+        
         self.tableView.reloadData()
     }
     func searchBarShouldBeginEditing(searchBar: UISearchBar) -> Bool {
@@ -74,6 +86,7 @@ class WeatherTableTableViewController: UITableViewController, UISearchBarDelegat
     
     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         
+        
         if(!searchController.active.boolValue && searchController.searchBar.text == ""){
             self.coreDataManager.viewWillAppearWeather()
             self.coreDataManager.viewWillAppearCity()
@@ -94,11 +107,14 @@ class WeatherTableTableViewController: UITableViewController, UISearchBarDelegat
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         if (searchController.active.boolValue || searchController.searchBar.text != ""){
+         
+            let numberOfRows = self.networkOperation.foundCityName.count
             
-//            print(searchController.active.boolValue)
-//            print(searchController.searchBar.text != "")
-            
-            return 1
+            if numberOfRows == 0 {
+                return 1
+            }else{
+                return numberOfRows
+            }
             
         }
         return coreDataManager.citiesList.count
@@ -109,18 +125,33 @@ class WeatherTableTableViewController: UITableViewController, UISearchBarDelegat
       
         if(searchController.active.boolValue || searchController.searchBar.text != ""){
             
-            cityIsTrue = networkOperation.getCityCoordinateForZip(searchController.searchBar.text!)
-            if (cityIsTrue){
-//                cell.textLabel?.text = networkOperation.findedCities[indexPath.row].cityInformation
-                cell.textLabel?.text = networkOperation.cityInformation
+            
+           
+            
+            let findCityCount = self.networkOperation.foundCityName.count
+            if (findCityCount > 0){
+                
+                
+                cell.textLabel?.text = networkOperation.foundCityName[indexPath.row]
+                cell.detailTextLabel?.text = networkOperation.foundCityInformation[indexPath.row]
 
+                
             }else{
+                
+                cityIsTrue = false
                 cell.textLabel?.text = "'\(searchController.searchBar.text!)' not found"
+                cell.detailTextLabel?.text = ""
+
             }           
             
         
         }else{
+            
+            cityIsTrue = true
+            
             cell.textLabel?.text = coreDataManager.citiesList[indexPath.row].cityName
+            cell.detailTextLabel?.text = coreDataManager.citiesList[indexPath.row].cityInformation
+
         }
         
         return cell
@@ -146,21 +177,15 @@ class WeatherTableTableViewController: UITableViewController, UISearchBarDelegat
             if (searchController.active.boolValue || searchController.searchBar.text != ""){
                 
                 let id = coreDataManager.smallestCityId()
-//                coreDataManager.addCityData(id, name: networkOperation.findedCities[indexPath.row].cityName!, information: networkOperation.findedCities[indexPath.row].cityInformation!, coordinate: networkOperation.findedCities[indexPath.row].cityCoordinate!)
-                    coreDataManager.addCityData(id, name: networkOperation.correctCityName, information: networkOperation.cityInformation, coordinate: networkOperation.cityCoordinate)
-
-                
+                coreDataManager.addCityData(id, name: networkOperation.foundCityName[indexPath.row], information: networkOperation.foundCityInformation[indexPath.row], coordinate: networkOperation.foundCityCoordinate[indexPath.row])
+              
                 networkOperation.addCityForecast(id)
                 
                 
-//                searchController.active = false
-//                searchController.searchBar.text = ""
-                //tableView.reloadData()
-                
-                 controller.cityId = id
+                controller.cityId = id
                 
             }else{
-                //networkOperation.getCityCoordinateForZip(String(coreDataManager.citiesList[indexPath.row].cityName))
+                
                 let cityId = coreDataManager.citiesList[indexPath.row].id
                 
                 coreDataManager.deleteWeatherData(cityId)

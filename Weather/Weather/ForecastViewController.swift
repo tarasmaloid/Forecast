@@ -32,7 +32,7 @@ class ForecastViewController: UIViewController {
     let dayTableCellIdentifier = "DayTableCellIdentifier"
     let dayTableSmallCellIdentifier = "DayTableSmallCellIdentifier"
     let currentDate = NSDate()
-
+    
     
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -41,7 +41,7 @@ class ForecastViewController: UIViewController {
     
     
     
-        
+    
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         var cell : UITableViewCell
         
@@ -56,8 +56,8 @@ class ForecastViewController: UIViewController {
         
         let dateFormatter = NSDateFormatter()
         dateFormatter.locale = NSLocale.currentLocale()
-     
-       
+        
+        
         let calculatedDate = NSCalendar.currentCalendar().dateByAddingUnit(NSCalendarUnit.Day, value: indexPath.row, toDate: currentDate, options: NSCalendarOptions.init(rawValue: 0))
         
         
@@ -72,13 +72,13 @@ class ForecastViewController: UIViewController {
             let baseCell = cell as! MyCustomDayCell
             
             tableView.rowHeight = 200
-        
+            
             baseCell.dayLabel?.text = "\(dayName)"
             baseCell.dateLabel?.text = "\(dayDate)"
             baseCell.temperatureLabel?.text = "\(numberFormatter.stringFromNumber(self.currentForecastData[indexPath.row].temperatureMax)!)º"
             baseCell.weatherImage?.image = UIImage(named: self.currentForecastData[indexPath.row].icon!)
             baseCell.summaryLabel?.text = self.currentForecastData[indexPath.row].summary
-          
+            
             baseCell.humidityImage?.image = UIImage(named: "humidity")
             baseCell.windImage?.image = UIImage(named: "windSpeed")
             baseCell.precipProbabilityImage?.image = UIImage(named: "precip")
@@ -102,7 +102,7 @@ class ForecastViewController: UIViewController {
             smallCell.weatherImage?.image = UIImage(named: self.currentForecastData[indexPath.row].icon!)
             
         }
-       return cell
+        return cell
     }
     
     
