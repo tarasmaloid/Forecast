@@ -78,6 +78,7 @@ class NetworkOperation{
         do{
             let jsonData = try NSJSONSerialization.JSONObjectWithData(weatherData!, options: []) as! NSDictionary
             
+            print(jsonData)
             
             if let currently = jsonData["currently"] as? [String: AnyObject] {
                 let temperature = currently["temperature"] as? Double

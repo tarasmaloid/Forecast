@@ -12,10 +12,10 @@ import UIKit
 import CoreData
 
 class WeatherTableTableViewController: UITableViewController, UISearchBarDelegate{
-
+    
     let weatherSegueIdentifier = "WeatherSegueIdentifier"
     let cityTableCellIdentifier = "CityTableCellIdentifier"
- 
+    
     
     let searchController = UISearchController(searchResultsController: nil)
     
@@ -24,31 +24,50 @@ class WeatherTableTableViewController: UITableViewController, UISearchBarDelegat
     let coreDataManager = CoreDataManager()
     let networkOperation = NetworkOperation()
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.leftBarButtonItem = editButtonItem()
         self.tableView.tableFooterView = UIView()
-  
+        
         coreDataManager.viewWillAppearCity()
         coreDataManager.viewWillAppearWeather()
-     
+        
         searchController.searchBar.delegate = self
         definesPresentationContext = true
         searchController.dimsBackgroundDuringPresentation = false
         searchController.searchBar.barTintColor = UIColor(red: 51/255, green: 102/255, blue: 153/255, alpha: 1)
         tableView.tableHeaderView = searchController.searchBar
-
-   }
-
+        
+        
+        if Reachability.isConnectedToNetwork() == true {
+            print("Internet connection OK")
+            
+        } else {
+            print("Internet connection FAILED")
+            showAlert()
+        }
+    }
+    
+    @IBAction func showAlert() {
+        let alertController = UIAlertController(title: "No Internet Connection", message: "Make sure your device is connected to the internet.", preferredStyle: .Alert)
+        
+        let defaultAction = UIAlertAction(title: "OK", style: .Default, handler: nil)
+        alertController.addAction(defaultAction)
+        
+        presentViewController(alertController, animated: true, completion: nil)
+    }
+    
     
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
         self.networkOperation.foundCityName.removeAll()
         self.networkOperation.foundCityInformation.removeAll()
         self.networkOperation.foundCityCoordinate.removeAll()
         
-        cityIsTrue = networkOperation.getCityCoordinateForZip(searchText)
         
-       
+        if Reachability.isConnectedToNetwork() {
+            cityIsTrue = networkOperation.getCityCoordinateForZip(searchText)
+        }
         
         self.tableView.reloadData()
         
@@ -58,8 +77,7 @@ class WeatherTableTableViewController: UITableViewController, UISearchBarDelegat
         self.tableView.reloadData()
     }
     func searchBarSearchButtonClicked(searchBar: UISearchBar) {
-        searchController.active = false
-        
+        searchController.active = false        
         
         self.tableView.reloadData()
     }
@@ -72,14 +90,14 @@ class WeatherTableTableViewController: UITableViewController, UISearchBarDelegat
         return true
     }
     
- 
+    
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-       
+        
         return 1
     }
     
-      
+    
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
         return true
     }
@@ -107,7 +125,7 @@ class WeatherTableTableViewController: UITableViewController, UISearchBarDelegat
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         if (searchController.active.boolValue || searchController.searchBar.text != ""){
-         
+            
             let numberOfRows = self.networkOperation.foundCityName.count
             
             if numberOfRows == 0 {
@@ -122,36 +140,41 @@ class WeatherTableTableViewController: UITableViewController, UISearchBarDelegat
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(self.cityTableCellIdentifier, forIndexPath: indexPath)
-      
+        
         if(searchController.active.boolValue || searchController.searchBar.text != ""){
             
-            
-           
-            
             let findCityCount = self.networkOperation.foundCityName.count
+            
             if (findCityCount > 0){
                 
                 
                 cell.textLabel?.text = networkOperation.foundCityName[indexPath.row]
                 cell.detailTextLabel?.text = networkOperation.foundCityInformation[indexPath.row]
-
+                
                 
             }else{
                 
                 cityIsTrue = false
-                cell.textLabel?.text = "'\(searchController.searchBar.text!)' not found"
-                cell.detailTextLabel?.text = ""
-
-            }           
+                if Reachability.isConnectedToNetwork(){
+                    cell.textLabel?.text = "'\(searchController.searchBar.text!)' not found"
+                    cell.detailTextLabel?.text = ""
+                }else{
+                    cityIsTrue = false
+                    cell.textLabel?.text = "No Internet Connection"
+                    cell.detailTextLabel?.text = "Make sure your device is connected to the internet."
+                }
+                
+                
+            }
             
-        
+            
         }else{
             
             cityIsTrue = true
             
             cell.textLabel?.text = coreDataManager.citiesList[indexPath.row].cityName
             cell.detailTextLabel?.text = coreDataManager.citiesList[indexPath.row].cityInformation
-
+            
         }
         
         return cell
@@ -167,7 +190,7 @@ class WeatherTableTableViewController: UITableViewController, UISearchBarDelegat
         
     }
     
-       override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if let controller = segue.destinationViewController as? ForecastViewController,
             indexPath = sender as? NSIndexPath {
             
@@ -178,7 +201,7 @@ class WeatherTableTableViewController: UITableViewController, UISearchBarDelegat
                 
                 let id = coreDataManager.smallestCityId()
                 coreDataManager.addCityData(id, name: networkOperation.foundCityName[indexPath.row], information: networkOperation.foundCityInformation[indexPath.row], coordinate: networkOperation.foundCityCoordinate[indexPath.row])
-              
+                
                 networkOperation.addCityForecast(id)
                 
                 
@@ -188,15 +211,19 @@ class WeatherTableTableViewController: UITableViewController, UISearchBarDelegat
                 
                 let cityId = coreDataManager.citiesList[indexPath.row].id
                 
-                coreDataManager.deleteWeatherData(cityId)
-                networkOperation.addCityForecast(cityId)
-                
+                if (Reachability.isConnectedToNetwork()==true){
+                    
+                    print("Internet connection OK")
+                    
+                    coreDataManager.deleteWeatherData(cityId)
+                    networkOperation.addCityForecast(cityId)
+                }
                 controller.cityId = cityId
                 
+                coreDataManager.viewWillAppearCity()
+                tableView.reloadData()
             }
-            coreDataManager.viewWillAppearCity()
-            tableView.reloadData()
         }
     }
-
+    
 }

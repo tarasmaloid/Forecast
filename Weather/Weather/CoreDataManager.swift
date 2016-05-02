@@ -26,7 +26,7 @@ class CoreDataManager{
         let city = NSManagedObject(entity: entity!,
                                    insertIntoManagedObjectContext: managedContext) as? City
         city?.saveData(id, name: name, information: information, coordinate: coordinate, inNSManagedContext: managedContext)
-             
+        
         viewWillAppearCity()
         
     }
@@ -168,23 +168,5 @@ class CoreDataManager{
     }
     
     
-    func addCityDataToArray(id: Int, name: String, information : String, coordinate : String) -> City {
-        
-        let appDelegate =
-            UIApplication.sharedApplication().delegate as! AppDelegate
-        let managedContext = appDelegate.managedObjectContext
-        let entity =  NSEntityDescription.entityForName("City",
-                                                        inManagedObjectContext:managedContext)
-        
-        let city = NSManagedObject(entity: entity!,
-                                   insertIntoManagedObjectContext: managedContext) as? City
-        
-        city?.id=0
-        city?.cityName=name
-        city?.cityInformation=information
-        city?.cityCoordinate = coordinate
-        
-        return city!
-    }
     
 }

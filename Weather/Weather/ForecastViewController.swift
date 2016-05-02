@@ -17,6 +17,10 @@ class ForecastViewController: UIViewController {
     @IBOutlet weak var cityNameLabel: UILabel!
     @IBOutlet weak var tableView: UITableView!
     
+    
+    let forecastDetailSegueIdentifier = "ForecastDetailSegueIdentifier"
+    
+    
     let coreDataManager = CoreDataManager()
     var currentForecastData : [Weather] = []
     
@@ -36,7 +40,7 @@ class ForecastViewController: UIViewController {
     
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return currentForecastData.count
+        return currentForecastData.count-1
     }
     
     
@@ -98,13 +102,27 @@ class ForecastViewController: UIViewController {
             
             smallCell.dayLabel?.text = "\(dayName)"
             smallCell.dateLabel?.text = "\(dayDate)"
-            smallCell.temperatureLabel?.text = "\(numberFormatter.stringFromNumber(self.currentForecastData[indexPath.row].temperatureMax)!)º / \(numberFormatter.stringFromNumber(self.currentForecastData[indexPath.row].temperatureMin)!)º"
-            smallCell.weatherImage?.image = UIImage(named: self.currentForecastData[indexPath.row].icon!)
+            smallCell.temperatureLabel?.text = "\(numberFormatter.stringFromNumber(self.currentForecastData[indexPath.row+1].temperatureMax)!)º / \(numberFormatter.stringFromNumber(self.currentForecastData[indexPath.row+1].temperatureMin)!)º"
+            smallCell.weatherImage?.image = UIImage(named: self.currentForecastData[indexPath.row+1].icon!)
             
         }
         return cell
     }
     
+    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        
+        self.performSegueWithIdentifier(self.forecastDetailSegueIdentifier, sender: indexPath)
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if let controller = segue.destinationViewController as? ForecastViewController,
+            indexPath = sender as? NSIndexPath {
+            
+            
+        }
+    
+    }
     
     
 }
