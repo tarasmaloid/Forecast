@@ -40,11 +40,7 @@ class WeatherTableTableViewController: UITableViewController, UISearchBarDelegat
         tableView.tableHeaderView = searchController.searchBar
         
         
-        if Reachability.isConnectedToNetwork() == true {
-            print("Internet connection OK")
-            
-        } else {
-            print("Internet connection FAILED")
+        if Reachability.isConnectedToNetwork() == false {
             showAlert()
         }
     }
@@ -213,7 +209,7 @@ class WeatherTableTableViewController: UITableViewController, UISearchBarDelegat
                 
                 if (Reachability.isConnectedToNetwork()==true){
                     
-                    print("Internet connection OK")
+                  
                     
                     coreDataManager.deleteWeatherData(cityId)
                     networkOperation.addCityForecast(cityId)

@@ -12,7 +12,7 @@ import UIKit
 
 class ForecastViewController: UIViewController {
     
-    var cityId : Int = 0
+    var cityId = 0
     
     @IBOutlet weak var cityNameLabel: UILabel!
     @IBOutlet weak var tableView: UITableView!
@@ -116,9 +116,12 @@ class ForecastViewController: UIViewController {
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if let controller = segue.destinationViewController as? ForecastViewController,
+        if let controller = segue.destinationViewController as? DetailWeatherViewController,
             indexPath = sender as? NSIndexPath {
             
+            controller.currentDayIndex = indexPath.row
+            controller.cityName = self.coreDataManager.getCityName(cityId)
+            controller.currentForecastData = self.currentForecastData
             
         }
     
