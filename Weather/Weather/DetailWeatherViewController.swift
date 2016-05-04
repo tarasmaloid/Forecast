@@ -59,15 +59,19 @@ class DetailWeatherViewController: UIViewController {
         cityNameLabel.text = cityName
         dayNameLabel.text = "\(dayName)"
         dateLabel.text = "\(dayDate)"
+        
         if currentDayIndex == 0 {
             weatherImage.image = UIImage(named: self.currentForecastData[currentDayIndex].icon!)
 
         }else{
             weatherImage.image = UIImage(named: self.currentForecastData[currentDayIndex+1].icon!)
         }
+        
+        
+        
         maxTemperatureLabel.text = "\(numberFormatter.stringFromNumber(self.currentForecastData[currentDayIndex+1].temperatureMax)!)º"
         minTemperatureLabel.text = "\(numberFormatter.stringFromNumber(self.currentForecastData[currentDayIndex+1].temperatureMin)!)º"
-      summaryLabel.text = self.currentForecastData[currentDayIndex+1].summary
+        summaryLabel.text = self.currentForecastData[currentDayIndex+1].summary
         humidityLabel.text = "\(numberFormatter.stringFromNumber(self.currentForecastData[currentDayIndex+1].humidity)!)%"
         windSpeedLabel.text = "\(numberFormatter.stringFromNumber(self.currentForecastData[currentDayIndex+1].windSpeed)!)m/s"
         precipProbabilityLabel.text = "\(numberFormatter.stringFromNumber(self.currentForecastData[currentDayIndex+1].precipProbability)!)%"

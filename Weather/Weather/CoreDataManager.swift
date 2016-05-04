@@ -38,7 +38,11 @@ class CoreDataManager{
         managedContext.deleteObject(citiesList[index] as NSManagedObject)
         
         citiesList.removeAtIndex(index)
-        try? managedContext.save()
+        do{
+            try managedContext.save()
+        }catch{
+        }
+        
         viewWillAppearCity()
     }
     
@@ -108,9 +112,11 @@ class CoreDataManager{
         for index in 0...self.weatherList.count-1 {
             if (self.weatherList[index].id == cityId){
                 managedContext.deleteObject(weatherList[index] as NSManagedObject)
-                //   weatherList.removeAtIndex(index)
-                try? managedContext.save()
-                //  viewWillAppearWeather()
+                
+                do{
+                    try managedContext.save()
+                }catch{}
+                
             }
         }
         viewWillAppearWeather()
@@ -119,7 +125,6 @@ class CoreDataManager{
     
     
     func smallestCityId() -> Int {
-        
         
         let citiesIDs = self.citiesList.map { $0.id }
         var i = 0
@@ -138,8 +143,7 @@ class CoreDataManager{
             if (self.weatherList[index].id == id){
                 currentCityForecast.append(weatherList[index])
             }
-        }
-        
+        }       
         
         return currentCityForecast
     }

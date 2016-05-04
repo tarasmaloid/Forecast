@@ -209,8 +209,6 @@ class WeatherTableTableViewController: UITableViewController, UISearchBarDelegat
                 
                 if (Reachability.isConnectedToNetwork()==true){
                     
-                  
-                    
                     coreDataManager.deleteWeatherData(cityId)
                     networkOperation.addCityForecast(cityId)
                 }

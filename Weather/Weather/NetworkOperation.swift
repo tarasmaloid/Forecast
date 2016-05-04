@@ -15,9 +15,6 @@ class NetworkOperation{
     
     let forecastAPIKey = "15d8d5ecb9ecddd55be4dad88dbccefd"
     
-    
-    
-    
     let coreDataManager = CoreDataManager()
     
     var foundCityName = [String]()
@@ -26,9 +23,7 @@ class NetworkOperation{
     
     
     
-    
     func getCityCoordinateForZip(zipCode: String) -> Bool {
-        
         
         
         let url = NSURL(string: "\(self.baseUrl)address=\(zipCode.stringByReplacingOccurrencesOfString(" ", withString: "+"))&key=\(self.apikey)")
@@ -44,20 +39,20 @@ class NetworkOperation{
             
             let cityInfo = res["formatted_address"] as? String
             
-            foundCityInformation.append(cityInfo!)
+            self.foundCityInformation.append(cityInfo!)
             
             if let geometry = res["geometry"] as? NSDictionary {
                 if let location = geometry["location"] as? NSDictionary {
                     let latitude = location["lat"] as! Float
                     let longitude = location["lng"] as! Float
-                    foundCityCoordinate.append("\(latitude),\(longitude)")
+                    self.foundCityCoordinate.append("\(latitude),\(longitude)")
                 }
             }
             
             if let addressComponents = res["address_components"] as? [[String : AnyObject]]{
                 
                 let cityName = addressComponents[0]["long_name"] as! String
-                foundCityName.append(cityName)
+                self.foundCityName.append(cityName)
             }
             
         }

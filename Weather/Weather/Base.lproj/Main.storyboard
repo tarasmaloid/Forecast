@@ -181,6 +181,20 @@
                                                     <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="clear-night" translatesAutoresizingMaskIntoConstraints="NO" id="eeH-Ba-8NZ">
+                                                    <rect key="frame" x="402" y="8" width="150" height="150"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="150" id="TXc-JE-cvX"/>
+                                                        <constraint firstAttribute="width" constant="150" id="oMg-hW-ALE"/>
+                                                    </constraints>
+                                                </imageView>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="obj-iH-brM">
+                                                    <rect key="frame" x="396" y="132" width="16" height="16"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="16" id="LAX-0m-nJU"/>
+                                                        <constraint firstAttribute="width" constant="16" id="M3h-DL-7v4"/>
+                                                    </constraints>
+                                                </imageView>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Mdm-bs-gH8">
                                                     <rect key="frame" x="436" y="132" width="16" height="16"/>
                                                     <constraints>
@@ -188,7 +202,7 @@
                                                         <constraint firstAttribute="width" constant="16" id="jHU-MB-civ"/>
                                                     </constraints>
                                                 </imageView>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="YTu-FO-igJ">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="precip" translatesAutoresizingMaskIntoConstraints="NO" id="YTu-FO-igJ">
                                                     <rect key="frame" x="476" y="132" width="16" height="16"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="16" id="6QI-LV-BDT"/>
@@ -224,20 +238,6 @@
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="16" id="Ldv-Ze-roP"/>
                                                         <constraint firstAttribute="height" constant="16" id="Typ-NA-o94"/>
-                                                    </constraints>
-                                                </imageView>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="eeH-Ba-8NZ">
-                                                    <rect key="frame" x="402" y="8" width="150" height="150"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="150" id="TXc-JE-cvX"/>
-                                                        <constraint firstAttribute="width" constant="150" id="oMg-hW-ALE"/>
-                                                    </constraints>
-                                                </imageView>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="obj-iH-brM">
-                                                    <rect key="frame" x="396" y="132" width="16" height="16"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="16" id="LAX-0m-nJU"/>
-                                                        <constraint firstAttribute="width" constant="16" id="M3h-DL-7v4"/>
                                                     </constraints>
                                                 </imageView>
                                             </subviews>
@@ -511,6 +511,7 @@
     </scenes>
     <resources>
         <image name="clear-day" width="300" height="300"/>
+        <image name="clear-night" width="300" height="300"/>
         <image name="humidity" width="32" height="32"/>
         <image name="precip" width="32" height="32"/>
         <image name="pressure" width="32" height="32"/>

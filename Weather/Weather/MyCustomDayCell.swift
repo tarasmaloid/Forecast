@@ -9,8 +9,7 @@
 import UIKit
 
 
-class MyCustomDayCell: UITableViewCell{
-    
+class MyCustomDayCell: UITableViewCell{    
     
     @IBOutlet weak var weatherImage: UIImageView!
     @IBOutlet weak var dayLabel: UILabel!

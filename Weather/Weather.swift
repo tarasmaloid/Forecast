@@ -34,9 +34,9 @@ class Weather: NSManagedObject {
         
         self.icon = icon
         self.summary = summary
-        
-        try? inNSManagedContext.save()
-        
+        do{
+            try inNSManagedContext.save()
+        }catch{}
     }
 
 }
